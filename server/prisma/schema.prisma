@@ -1,0 +1,149 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User representation
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String?   // Nullable for OAuth users
+  fullName      String
+  role          String    @default("USER") // USER, ADMIN
+  googleId      String?   @unique
+  profilePic    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  bookings      Booking[]
+  passengers    SavedPassenger[]
+}
+
+// Saved passenger for quick booking
+model SavedPassenger {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime
+  passportNumber String?
+  gender        String?
+  nationality   String?
+  createdAt     DateTime  @default(now())
+}
+
+// Airport representation
+model Airport {
+  code          String    @id // e.g. LHR, JFK
+  name          String
+  city          String
+  country       String
+  timezone      String
+  latitude      Float?
+  longitude     Float?
+  departures    Flight[]  @relation("Departures")
+  arrivals      Flight[]  @relation("Arrivals")
+}
+
+// Airline representation
+model Airline {
+  id            String    @id @default(uuid())
+  code          String    @unique // e.g. BA, AA, DL
+  name          String
+  logoUrl       String?
+  flights       Flight[]
+}
+
+// Flight schedule
+model Flight {
+  id                  String      @id @default(uuid())
+  flightNumber        String      @unique // e.g. BA249
+  airlineId           String
+  airline             Airline     @relation(fields: [airlineId], references: [id])
+  departureAirportId  String
+  departureAirport    Airport     @relation("Departures", fields: [departureAirportId], references: [code])
+  arrivalAirportId    String
+  arrivalAirport      Airport     @relation("Arrivals", fields: [arrivalAirportId], references: [code])
+  departureTime       DateTime
+  arrivalTime         DateTime
+  durationMinutes     Int
+  basePrice           Float
+  status              String      @default("SCHEDULED") // SCHEDULED, DELAYED, DEPARTED, ARRIVED, CANCELLED
+  bookings            Booking[]
+  seats               Seat[]
+}
+
+// Individual seat mapping on a flight
+model Seat {
+  id            String      @id @default(uuid())
+  flightId      String
+  flight        Flight      @relation(fields: [flightId], references: [id], onDelete: Cascade)
+  seatNumber    String      // e.g. 12A, 1C
+  class         String      // ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST_CLASS
+  isBooked      Boolean     @default(false)
+  priceMarkup   Float       @default(0.00)
+  bookingId     String?
+  booking       Booking?    @relation(fields: [bookingId], references: [id])
+  
+  @@unique([flightId, seatNumber])
+}
+
+// Booking receipt
+model Booking {
+  id            String        @id @default(uuid())
+  bookingRef    String        @unique // e.g. PNR-123456
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  flightId      String
+  flight        Flight        @relation(fields: [flightId], references: [id])
+  status        String        @default("PENDING") // PENDING, CONFIRMED, CANCELLED, REFUNDED
+  totalFare     Float
+  taxAmount     Float
+  discountAmount Float        @default(0.00)
+  promoCode     String?
+  seats         Seat[]
+  passengers    PassengerDetails[]
+  payment       Payment?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+// Details for passengers included in a booking
+model PassengerDetails {
+  id            String    @id @default(uuid())
+  bookingId     String
+  booking       Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  firstName     String
+  lastName      String
+  gender        String
+  passportNumber String
+  dateOfBirth   DateTime
+  seatNumber    String
+}
+
+// Payment information
+model Payment {
+  id            String    @id @default(uuid())
+  bookingId     String    @unique
+  booking       Booking   @relation(fields: [bookingId], references: [id])
+  transactionId String    @unique
+  provider      String    // STRIPE, PAYPAL, FLUTTERWAVE
+  amount        Float
+  currency      String    @default("USD")
+  status        String    // SUCCESS, FAILED, REFUNDED
+  createdAt     DateTime  @default(now())
+}
+
+// Active discount promo codes
+model PromoCode {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  discountValue Float
+  isPercentage  Boolean   @default(true)
+  expiresAt     DateTime
+  isActive      Boolean   @default(true)
+}

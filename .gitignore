@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Next.js build output
+client/.next/
+client/out/
+client/build/
+
+# Local env files
+.env
+.env.*
+client/.env*
+server/.env
+server/.env.*
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Misc
+.DS_Store
+*.pem
+.vercel
+*.tsbuildinfo
+client/next-env.d.ts
+
+# Agents workspace configurations (optional to ignore, but let's ignore to keep repo clean)
+.agents/
+skills-lock.json
+
+# SQLite database files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+
