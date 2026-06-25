@@ -135,66 +135,68 @@ export default function SeatMap({ flightId, totalPassengers, selectedSeats, onSe
       ) : error ? (
         <div className="text-center text-red-500 py-10 text-sm font-semibold">{error}</div>
       ) : (
-        /* Airplane Fuselage container */
-        <div className="w-full max-w-sm border-2 border-slate-300 dark:border-slate-800 rounded-t-[100px] border-b-8 p-6 pt-16 bg-slate-50 dark:bg-slate-900/50 flex flex-col items-center">
-          
-          {/* Flight cabin nose cone label */}
-          <div className="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-10 border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-full bg-white dark:bg-slate-900 shadow-sm">
-            Flight Deck Ahead
-          </div>
+        /* Airplane Fuselage container wrapped in overflow-x-auto for mobile compatibility */
+        <div className="w-full overflow-x-auto pb-4 flex justify-start md:justify-center">
+          <div className="min-w-[310px] w-full max-w-sm border-2 border-slate-300 dark:border-slate-800 rounded-t-[100px] border-b-8 p-4 sm:p-6 pt-16 bg-slate-50 dark:bg-slate-900/50 flex flex-col items-center">
+            
+            {/* Flight cabin nose cone label */}
+            <div className="text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mb-10 border border-slate-200 dark:border-slate-800 px-3 py-1 rounded-full bg-white dark:bg-slate-900 shadow-sm">
+              Flight Deck Ahead
+            </div>
 
-          <div className="w-full space-y-4">
-            {Object.entries(rows).map(([rowNum, rowSeats]) => (
-              <div key={rowNum} className="flex items-center justify-between gap-1 w-full">
-                
-                {/* Row label left */}
-                <div className="w-5 text-xxs font-black text-slate-400 text-center">{rowNum}</div>
+            <div className="w-full space-y-4">
+              {Object.entries(rows).map(([rowNum, rowSeats]) => (
+                <div key={rowNum} className="flex items-center justify-between gap-1 w-full">
+                  
+                  {/* Row label left */}
+                  <div className="w-5 text-xxs font-black text-slate-400 text-center">{rowNum}</div>
 
-                {/* Left side seats (first half of alphabet e.g. A, B, C) */}
-                <div className="flex items-center gap-2 flex-1 justify-end">
-                  {rowSeats.slice(0, Math.ceil(rowSeats.length / 2)).map((seat) => (
-                    <button
-                      key={seat.id}
-                      onClick={() => handleSeatClick(seat)}
-                      disabled={seat.isBooked}
-                      className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all ${getSeatClass(seat)}`}
-                      title={`${seat.seatNumber} (${seat.class.replace('_', ' ')}) ${seat.isBooked ? '- Booked' : ''}`}
-                    >
-                      <span className="text-xxs font-bold">{seat.seatNumber}</span>
-                    </button>
-                  ))}
+                  {/* Left side seats (first half of alphabet e.g. A, B, C) */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-1 justify-end">
+                    {rowSeats.slice(0, Math.ceil(rowSeats.length / 2)).map((seat) => (
+                      <button
+                        key={seat.id}
+                        onClick={() => handleSeatClick(seat)}
+                        disabled={seat.isBooked}
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all ${getSeatClass(seat)}`}
+                        title={`${seat.seatNumber} (${seat.class.replace('_', ' ')}) ${seat.isBooked ? '- Booked' : ''}`}
+                      >
+                        <span className="text-xxs font-bold">{seat.seatNumber}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Aisle */}
+                  <div className="w-6 flex items-center justify-center">
+                    <div className="h-8 sm:h-9 w-[2px] bg-slate-200 dark:bg-slate-800"></div>
+                  </div>
+
+                  {/* Right side seats (second half of alphabet e.g. D, E, F) */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-1 justify-start">
+                    {rowSeats.slice(Math.ceil(rowSeats.length / 2)).map((seat) => (
+                      <button
+                        key={seat.id}
+                        onClick={() => handleSeatClick(seat)}
+                        disabled={seat.isBooked}
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl border flex items-center justify-center transition-all ${getSeatClass(seat)}`}
+                        title={`${seat.seatNumber} (${seat.class.replace('_', ' ')}) ${seat.isBooked ? '- Booked' : ''}`}
+                      >
+                        <span className="text-xxs font-bold">{seat.seatNumber}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Row label right */}
+                  <div className="w-5 text-xxs font-black text-slate-400 text-center">{rowNum}</div>
+
                 </div>
+              ))}
+            </div>
 
-                {/* Aisle */}
-                <div className="w-6 flex items-center justify-center">
-                  <div className="h-9 w-[2px] bg-slate-200 dark:bg-slate-800"></div>
-                </div>
-
-                {/* Right side seats (second half of alphabet e.g. D, E, F) */}
-                <div className="flex items-center gap-2 flex-1 justify-start">
-                  {rowSeats.slice(Math.ceil(rowSeats.length / 2)).map((seat) => (
-                    <button
-                      key={seat.id}
-                      onClick={() => handleSeatClick(seat)}
-                      disabled={seat.isBooked}
-                      className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all ${getSeatClass(seat)}`}
-                      title={`${seat.seatNumber} (${seat.class.replace('_', ' ')}) ${seat.isBooked ? '- Booked' : ''}`}
-                    >
-                      <span className="text-xxs font-bold">{seat.seatNumber}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Row label right */}
-                <div className="w-5 text-xxs font-black text-slate-400 text-center">{rowNum}</div>
-
-              </div>
-            ))}
-          </div>
-
-          {/* Airplane tail notice */}
-          <div className="w-full text-center border-t border-slate-200 dark:border-slate-800 mt-10 pt-4 text-[10px] font-bold text-slate-400 uppercase tracking-wide">
-            Galley & Restrooms
+            {/* Airplane tail notice */}
+            <div className="w-full text-center border-t border-slate-200 dark:border-slate-800 mt-10 pt-4 text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+              Galley & Restrooms
+            </div>
           </div>
         </div>
       )}

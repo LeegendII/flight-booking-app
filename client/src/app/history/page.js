@@ -173,12 +173,12 @@ export default function HistoryPage() {
               </div>
 
               {/* Action buttons */}
-              <div className="flex gap-3 border-t border-slate-100 dark:border-slate-800 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 border-t border-slate-100 dark:border-slate-800 pt-4">
                 {/* Download ticket */}
                 <a
                   href={bookingsApi.downloadPdfUrl(booking.id)}
                   download
-                  className="px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 text-white dark:text-slate-900 text-xs font-bold uppercase rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
+                  className="w-full sm:w-auto px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 text-white dark:text-slate-900 text-xs font-bold uppercase rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-all"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Get Ticket</span>
@@ -188,7 +188,7 @@ export default function HistoryPage() {
                 {(booking.status === 'CONFIRMED' || booking.status === 'PENDING') && (
                   <button
                     onClick={() => setCancellingId(booking.id)}
-                    className="px-4 py-2 border border-red-500/20 text-red-500 hover:bg-red-500/5 text-xs font-bold uppercase rounded-xl flex items-center gap-1.5 ml-auto transition-colors"
+                    className="w-full sm:w-auto px-4 py-2 border border-red-500/20 text-red-500 hover:bg-red-500/5 text-xs font-bold uppercase rounded-xl flex items-center justify-center gap-1.5 sm:ml-auto transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>Cancel & Refund</span>

@@ -1,17 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, setUser } from '../store/bookingSlice';
 import { authApi } from '../services/api';
-import { Plane, LogOut, LayoutDashboard, History, User } from 'lucide-react';
+import { Plane, LogOut, LayoutDashboard, History, User, Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { user, token } = useSelector((state) => state.booking);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (token && !user) {
@@ -77,8 +78,8 @@ export default function Navbar() {
           )}
         </nav>
 
-        {/* Auth status buttons */}
-        <div className="flex items-center gap-4">
+        {/* Auth status buttons & Mobile Hamburger Toggle */}
+        <div className="flex items-center gap-3">
           {user ? (
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex flex-col text-right">
@@ -120,9 +121,68 @@ export default function Navbar() {
               </Link>
             </div>
           )}
+
+          {/* Hamburger Menu Icon */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden p-2 rounded-xl text-slate-500 hover:text-brand-primary hover:bg-indigo-500/5 dark:hover:bg-indigo-500/10 transition-all focus:outline-none"
+            aria-label="Toggle Menu"
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
 
       </div>
+
+      {/* Mobile Drawer Navigation Menu */}
+      {isOpen && (
+        <div className="md:hidden border-t border-card-border bg-[#050505] py-4 px-6 space-y-4 animate-fade-in-up">
+          <Link
+            href="/"
+            onClick={() => setIsOpen(false)}
+            className="block text-sm font-semibold text-slate-300 hover:text-white py-2 border-b border-card-border"
+          >
+            Search Flights
+          </Link>
+          
+          {user && (
+            <>
+              <Link
+                href="/history"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white py-2 border-b border-card-border"
+              >
+                <History className="w-4 h-4" /> My Bookings
+              </Link>
+              
+              {user.role === 'ADMIN' && (
+                <Link
+                  href="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white py-2 border-b border-card-border"
+                >
+                  <LayoutDashboard className="w-4 h-4" /> Admin Panel
+                </Link>
+              )}
+
+              {/* Mobile Profile Welcome */}
+              <div className="pt-2 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full border border-card-border bg-slate-800 flex items-center justify-center overflow-hidden">
+                  {user.profilePic ? (
+                    <img src={user.profilePic} alt={user.fullName} className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-4 h-4 text-slate-500" />
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase leading-none">Logged In As</span>
+                  <span className="text-xs font-semibold text-slate-300 mt-0.5">{user.fullName}</span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </header>
   );
 }

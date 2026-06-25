@@ -17,6 +17,7 @@ export default function SearchPage() {
 
   // Active step: 'outbound' or 'return'
   const [currentLeg, setCurrentLeg] = useState('outbound');
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   // Data states
   const [flights, setFlights] = useState([]);
@@ -218,11 +219,28 @@ export default function SearchPage() {
         </div>
       )}
 
+      {/* Mobile Toggle for Filters */}
+      <div className="lg:hidden">
+        <button
+          type="button"
+          onClick={() => setShowMobileFilters(!showMobileFilters)}
+          className="w-full flex items-center justify-between px-6 py-4 bg-card border border-card-border rounded-3xl text-sm font-bold text-[#f5f0e8] hover:border-brand-primary transition-all"
+        >
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-brand-primary" />
+            <span>Filter & Sort Flights</span>
+          </div>
+          <span className="text-xs uppercase text-brand-primary">
+            {showMobileFilters ? 'Hide Options' : 'Show Options'}
+          </span>
+        </button>
+      </div>
+
       {/* Main layout grid */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         
         {/* Left column: Filters & Sorters */}
-        <div className="bg-card border border-card-border rounded-3xl p-6 shadow-sm space-y-6 glass">
+        <div className={`bg-card border border-card-border rounded-3xl p-6 shadow-sm space-y-6 glass lg:block ${showMobileFilters ? 'block' : 'hidden'}`}>
           <div className="flex items-center gap-2 border-b border-card-border pb-4">
             <Filter className="w-5 h-5 text-brand-primary" />
             <h3 className="font-extrabold text-lg">Filter & Sort</h3>

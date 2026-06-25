@@ -122,7 +122,7 @@ export default function HomePage() {
       <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[85vh] rounded-3xl overflow-hidden border border-card-border bg-black shadow-2xl relative">
         
         {/* Left Side: Brand Typography & BookNow start button */}
-        <div className="flex flex-col justify-between p-8 md:p-16 border-r border-card-border text-[#f5f0e8] relative z-10 bg-[#050505]">
+        <div className="flex flex-col justify-between p-8 md:p-16 border-b lg:border-b-0 lg:border-r border-card-border text-[#f5f0e8] relative z-10 bg-[#050505]">
           <div className="space-y-8">
             <span className="text-xs uppercase tracking-widest text-brand-primary font-bold">
               Weaver of visual journeys
